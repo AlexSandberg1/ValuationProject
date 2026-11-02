@@ -15,16 +15,17 @@ data = pd.read_csv('sp500_snapshot.csv')
 data['ev_ebitda'] = data['enterprise_value'] / data['ebitda']
 data = data[(data['ebitda'] > 0) & (data['ev_ebitda'].between(2, 60))].copy()
 
-# Make the dependent vairable log(EV/EBITDA)
+# Make the dependent variable log(EV/EBITDA)
 data['y'] = np.log(data['ev_ebitda'])
 
 # Select the variables to be used
-data['size'] = np.log(data['revenue']) # Take log(Revenue) to make different sized companies more comparebale
+data['size'] = np.log(data['revenue']) # Take log(Revenue) to make different sized companies more comparable
 data['capex_revenue'] = data['capex'] / data['revenue']
 data['net_debt_assets'] = (data['total_debt'] - data['cash']) / data['total_assets']
 numeric_features = ['size', 'revenue_growth', 'ebitda_margin', 'operating_margin', 'return_on_assets', 'capex_revenue', 'net_debt_assets']
 
 # Clean data
+data = data.replace([np.inf, -np.inf], np.nan)
 data = data.dropna(subset=numeric_features + ['y']).reset_index(drop=True)
 data = data.drop_duplicates(subset=['revenue', 'ebitda']).reset_index(drop=True)
 
@@ -42,11 +43,11 @@ pred_sector = np.zeros(len(data))
 # Set up k fold
 folds = KFold(n_splits=5, shuffle=True, random_state=0)
 
-# Set up random forest model (found the optimal parameters seperately)
+# Set up random forest model (found the optimal parameters separately)
 def make_rf_model():
     return RandomForestRegressor(n_estimators=500, min_samples_leaf=1, random_state=1)
 
-# Set up ridge model (found optimal alpha value seperately)
+# Set up ridge model (found optimal alpha value separately)
 def make_ridge_model():
     return make_pipeline(StandardScaler(), Ridge(alpha=2000)) 
 
@@ -72,7 +73,7 @@ for training_sample, testing_sample in folds.split(data):
     sector_median = train.groupby('sector')['y'].median()
     pred_sector[testing_sample] = test['sector'].map(sector_median).fillna(train['y'].median())
 
-# Comapre results between methods and print
+# Compare results between methods and print
 def compare(method, pred):
     prediction_error = np.abs(np.exp(pred) - data['ev_ebitda']) / data['ev_ebitda']
     print(f'{method:<36} Median Prediction Error Percentage: {round((prediction_error.median()*100),2)}%    R2: {round((r2_score(y, pred)),2)}')
