@@ -8,7 +8,7 @@ url = 'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies'
 page = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'}).text
 sp500 = pd.read_html(page)[0]
 
-# Select anything thats NOT a bank, insurer, or property company
+# Select anything that is NOT a bank, insurer, or property company
 sp500 = sp500[~sp500['GICS Sector'].isin(['Financials', 'Real Estate'])]
 
 # Values we want from Yahoo
@@ -33,7 +33,7 @@ def latest_value(statement, possible_row_names):
 all_company_data = []
 failed = []
 
-# Loops through for each comapny and gathers data needed
+# Loops through for each company and gathers data needed
 for symbol, sector in zip(sp500['Symbol'], sp500['GICS Sector']):
     yahoo_symbol = symbol.replace('.', '-')
 
