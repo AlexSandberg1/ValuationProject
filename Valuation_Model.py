@@ -51,26 +51,26 @@ def make_ridge_model():
     return make_pipeline(StandardScaler(), Ridge(alpha=2000)) 
 
 # Select the training and test samples
-for train_rows, test_rows in folds.split(data):
-    train = data.iloc[train_rows]
-    test = data.iloc[test_rows]
+for training_sample, testing_sample in folds.split(data):
+    train = data.iloc[training_sample]
+    test = data.iloc[testing_sample]
 
     # Random forest model
     model = make_rf_model()
-    model.fit(X.iloc[train_rows], y.iloc[train_rows])
-    pred_rf_model[test_rows] = model.predict(X.iloc[test_rows])
+    model.fit(X.iloc[training_sample], y.iloc[training_sample])
+    pred_rf_model[testing_sample] = model.predict(X.iloc[testing_sample])
 
     # Ridge model
     model = make_ridge_model()
-    model.fit(X.iloc[train_rows], y.iloc[train_rows])
-    pred_ridge_model[test_rows] = model.predict(X.iloc[test_rows])
+    model.fit(X.iloc[training_sample], y.iloc[training_sample])
+    pred_ridge_model[testing_sample] = model.predict(X.iloc[testing_sample])
 
     # Median value
-    pred_median[test_rows] = train['y'].median()
+    pred_median[testing_sample] = train['y'].median()
 
     # Median sector value
     sector_median = train.groupby('sector')['y'].median()
-    pred_sector[test_rows] = test['sector'].map(sector_median).fillna(train['y'].median())
+    pred_sector[testing_sample] = test['sector'].map(sector_median).fillna(train['y'].median())
 
 # Comapre results between methods and print
 def compare(method, pred):
