@@ -3,8 +3,6 @@
 ## Overview
 A Python machine learning project that estimates the EV/EBITDA multiple an S&P 500 company “should” trade on, based on selected metrics. Companies valued well below their predicted multiple are noted as potentially undervalued, and become candidates for further analysis such as a DCF. A random forest model is used for the main analysis and is compared against other models to assess performance.
 
-<br>
-
 ## Results
 - Four different methods were used to create estimates: simply using the median value, using the sector median value, using a Ridge model, and using the Random Forest model. The results from each are shown below:
 
@@ -15,9 +13,13 @@ A Python machine learning project that estimates the EV/EBITDA multiple an S&P 5
 | Ridge regression | 25.2% | 0.05 |
 | **Random forest** | **21.3%** | **0.33** |
 
+<br>
+
 - For the Random Forest model, this is an additional graph showing the predictions against the actual values
 
  ![Predicted vs Actual EV/EBITDA](images/Random_Forest_Graph.png)
+
+ <br>
 
  - According to the model, these were the companies which are **most undervalued**:
 
@@ -95,6 +97,8 @@ A Python machine learning project that estimates the EV/EBITDA multiple an S&P 5
 - Unfortunately, as seen in the graph and 'undervalued' table, it is apparent that most of the most undervalued companies are simply the companies with the lowest actual log(EV/EBITDA) values. This is the major limitation, the extremes dominate at both ends of the spectrum. This can be seen further in the table below, where the most overvalued companies are generally also the ones with the largest actual log(EV/EBITDA) values.\
       - This happens because the model only explains a part of the variation and so the predictions are pulled towards the average.
 
+<br>
+
  | Ticker | Sector | Actual EV/EBITDA | Predicted EV/EBITDA | Log gap |
 |---|---|---|---|---|
 | TTWO | Communication Services | 47.85 | 12.16 | -1.37 |
@@ -102,6 +106,8 @@ A Python machine learning project that estimates the EV/EBITDA multiple an S&P 5
 | SBUX | Consumer Discretionary | 23.85 | 9.23 | -0.95 |
 | TWLO | Information Technology | 50.95 | 19.79 | -0.95 |
 | DE | Industrials | 27.89 | 10.91 | -0.94 |
+
+<br>
 
 - Given the issues mentioned, I plan to use the output as a baseline of potential companies to look into in more detail, rather than simply accepting the result from the model.
 
